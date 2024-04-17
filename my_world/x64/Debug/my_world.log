@@ -1,9 +1,2 @@
 ﻿  Application.cpp
-  IndexBuffer.cpp
-  Renderer.cpp
-  Shader.cpp
-  VertexArray.cpp
-C:\Users\claes\source\repos\my_world\my_world\src\VertexArray.cpp(31,9): warning C4312: 'type cast': conversion from 'unsigned int' to 'const void *' of greater size
-  VertexBuffer.cpp
-  Generating Code...
   my_world.vcxproj -> C:\Users\claes\source\repos\my_world\x64\Debug\my_world.exe
