@@ -92,7 +92,7 @@ int main(void)
         Shader shader("res/shaders/Basic.shader");
         shader.Bind();
         glm::vec4 rgba(1.0f, 1.0f, 1.0f, 1.0f);
-        shader.SetUniform4f_test("u_Color", rgba);
+        shader.SetUniform4fv("u_Color", rgba);
 
         Texture texture("res/textures/cowboy.png");
         texture.Bind();
@@ -145,7 +145,7 @@ int main(void)
             }
 
             shader.Bind();
-            shader.SetUniform4f_test("u_Color", rgba);
+            shader.SetUniform4fv("u_Color", rgba);
             shader.SetUniformMat4f("u_MVP", mvp);
 
             renderer.Draw(va, ib, shader);
