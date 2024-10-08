@@ -60,10 +60,10 @@ int main(void)
         // a vertex can contain a lot more than just positions for example texture coordinates as well and more
         float positions[] =
         {
-             0.0f,   0.0f,   0.0f, 0.0f, //1
-             150.0f, 0.0f,   1.0f, 0.0f, //2
-             150.0f, 150.0f, 1.0f, 1.0f, //3
-             0.0f,   150.0f, 0.0f, 1.0f  //4
+             -100.0f, -100.0f, 0.0f, 0.0f, //1
+              100.0f, -100.0f, 1.0f, 0.0f, //2
+              100.0f,  100.0f, 1.0f, 1.0f, //3
+             -100.0f,  100.0f, 0.0f, 1.0f  //4
         };
 
         unsigned int indices[] =
@@ -91,8 +91,9 @@ int main(void)
 
         Shader shader("res/shaders/Basic.shader");
         shader.Bind();
-        glm::vec4 rgba(1.0f, 1.0f, 1.0f, 1.0f);
-        shader.SetUniform4fv("u_Color", rgba);
+        glm::vec4 rgba1(1.0f, 1.0f, 1.0f, 1.0f);
+        glm::vec4 rgba2(1.0f, 1.0f, 1.0f, 1.0f);
+        shader.SetUniform4fv("u_Color", rgba1);
 
         Texture texture("res/textures/cowboy.png");
         texture.Bind();
@@ -114,13 +115,15 @@ int main(void)
         io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
         io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
 
-        glm::vec3 translation((window_width - 150) / 2, (window_height - 150) / 2, 0);
+        glm::vec3 translationA((window_width) / 4, (window_height) / 2, 0);
+        glm::vec3 translationB((window_width) / 4 * 3, (window_height) / 2, 0);
 
-        bool disco = false;
+        bool disco1 = false;
+        bool disco2 = false;
 
-        float red = 0.0f;
+        float shift1 = 0.0f;
+        float shift2 = 0.0f;
         float increment = 0.01f;
-        float increment2 = 0.005f;
 
         /* Loop until the user closes the window */
         while (!glfwWindowShouldClose(window))
@@ -132,32 +135,57 @@ int main(void)
             ImGui_ImplGlfw_NewFrame();
             ImGui::NewFrame();
 
-            glm::mat4 model = glm::translate(glm::mat4(1.0f), translation);
-            glm::mat4 mvp = proj * view * model;
-
-
             // just some random shit to test ImGui
-            if (disco)
+            if (disco1)
             {
-                rgba.r = 0.5 * sin(glfwGetTime()) + 0.5;
-                rgba.g = 0.5 * sin(glfwGetTime() + (PI * 2 / 3)) + 0.5;
-                rgba.b = 0.5 * sin(glfwGetTime() + (PI * 2 / 3 * 2)) + 0.5;
+                shift1 += increment;
+                rgba1.r = 0.5 * sin(shift1) + 0.5;
+                rgba1.g = 0.5 * sin(shift1 + (PI * 2 / 3)) + 0.5;
+                rgba1.b = 0.5 * sin(shift1 + (PI * 2 / 3 * 2)) + 0.5;
+            }
+            if (disco2)
+            {
+                shift2 += increment;
+                rgba2.r = 0.5 * sin(shift2) + 0.5;
+                rgba2.g = 0.5 * sin(shift2 + (PI * 2 / 3)) + 0.5;
+                rgba2.b = 0.5 * sin(shift2 + (PI * 2 / 3 * 2)) + 0.5;
             }
 
-            shader.Bind();
-            shader.SetUniform4fv("u_Color", rgba);
-            shader.SetUniformMat4f("u_MVP", mvp);
+            
 
-            renderer.Draw(va, ib, shader);
+            {
+                glm::mat4 model = glm::translate(glm::mat4(1.0f), translationA);
+                glm::mat4 mvp = proj * view * model;
+                shader.Bind();
+                shader.SetUniform4fv("u_Color", rgba1);
+                shader.SetUniformMat4f("u_MVP", mvp);
+
+                renderer.Draw(va, ib, shader);
+            }
+
+            {
+                glm::mat4 model = glm::translate(glm::mat4(1.0f), translationB);
+                glm::mat4 mvp = proj * view * model;
+                shader.Bind();
+                shader.SetUniform4fv("u_Color", rgba2);
+                shader.SetUniformMat4f("u_MVP", mvp);
+
+                renderer.Draw(va, ib, shader);
+            }
+
 
 
 
             {
                 ImGui::Begin("Hello, world!");
-                ImGui::SliderFloat("Translation X", &translation.x, 0.0f, (float)window_width - 150);
-                ImGui::SliderFloat("Translation Y", &translation.y, 0.0f, (float)window_height - 150);
-                ImGui::SliderFloat3("RGB Shift", &rgba.x, 0.0f, 1.0f);
-                ImGui::Checkbox("Disco Color", &disco);
+                ImGui::SliderFloat("TranslationA X", &translationA.x, 0.0f, (float)window_width);
+                ImGui::SliderFloat("TranslationA Y", &translationA.y, 0.0f, (float)window_height);
+                ImGui::SliderFloat3("RGB A Shift", &rgba1.x, 0.0f, 1.0f);
+                ImGui::SliderFloat("TranslationB X", &translationB.x, 0.0f, (float)window_width);
+                ImGui::SliderFloat("TranslationB Y", &translationB.y, 0.0f, (float)window_height);
+                ImGui::SliderFloat3("RGB B Shift", &rgba2.x, 0.0f, 1.0f);
+                ImGui::Checkbox("Disco Color A", &disco1);
+                ImGui::Checkbox("Disco Color B", &disco2);
                 ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
                 ImGui::End();
             }
