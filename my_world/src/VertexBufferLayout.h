@@ -4,6 +4,7 @@
 #include <GL/glew.h>
 #include <stdexcept>
 
+#include "Vertex.h"
 #include "Renderer.h"
 
 struct VertexBufferElement
@@ -39,6 +40,13 @@ public:
 	void Push(unsigned int count)
 	{
 		std::runtime_error(false);
+	}
+
+	template<>
+	void Push<Vertex>(unsigned int count)
+	{
+		m_Elements.push_back({ GL_FLOAT, count * 5, GL_FALSE });
+		m_Stride += count * 5 * VertexBufferElement::GetSizeOfType(GL_FLOAT);
 	}
 
 	template<>

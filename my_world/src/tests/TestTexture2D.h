@@ -37,5 +37,7 @@ namespace test {
 		float m_Shift1 = 0.0f;
 		float m_Shift2 = 0.0f;
 		float m_Increment = 0.01f;
+		float m_q0pos[2];
+		float m_q1pos[2];
 	};
 }
